@@ -95,19 +95,20 @@ export default function ServiceClient() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 pt-32 pb-32 text-left">
-        <div className="mb-12">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
+      {/* pt-32 reduced to pt-24 and pb-32 to pb-16 */}
+      <main className="max-w-4xl mx-auto px-6 pt-24 pb-16 text-left">
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
             Verified Solution
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">{service.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">{service.title}</h1>
           <p className="text-lg text-slate-500 max-w-2xl leading-relaxed">{service.desc}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-            <h3 className="text-xl font-black mb-6 flex items-center gap-2 text-slate-900">Required Documents</h3>
-            <ul className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div className="bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <h3 className="text-xl font-black mb-4 flex items-center gap-2 text-slate-900">Required Documents</h3>
+            <ul className="space-y-3">
               {service.docs.map((doc: string) => (
                 <li key={doc} className="flex items-center gap-3 text-slate-600 font-medium text-sm">
                   <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" /> {doc}
@@ -115,9 +116,9 @@ export default function ServiceClient() {
               ))}
             </ul>
           </div>
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-            <h3 className="text-xl font-black mb-6 flex items-center gap-2 text-emerald-600">Inclusions</h3>
-            <ul className="space-y-4">
+          <div className="bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <h3 className="text-xl font-black mb-4 flex items-center gap-2 text-emerald-600">Inclusions</h3>
+            <ul className="space-y-3">
               {service.features.map((feature: string) => (
                 <li key={feature} className="flex items-center gap-3 text-slate-600 font-medium text-sm">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {feature}
@@ -127,7 +128,7 @@ export default function ServiceClient() {
           </div>
         </div>
         
-        <div className="mt-12">
+        <div className="mt-8">
           <Link href="/submit-case" className="bg-blue-600 text-white py-6 rounded-[2.5rem] block text-center font-black text-xl hover:scale-105 transition-all shadow-2xl shadow-blue-200">
             Secure This Service for ₹{service.price}
           </Link>
