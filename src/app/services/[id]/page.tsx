@@ -1,25 +1,14 @@
-// This function tells Next.js which IDs to pre-render for the static export
-export async function generateStaticParams() {
-  // These must match the 'ids' you used in your Home page FunnelBox
-  const ids = [
-    "police", "consumer", "cyber", 
-    "itr", "gst", "challan", 
-    "registration", "ipo"
-  ];
-
-  return ids.map((id) => ({
-    id: id,
-  }));
-}
-
-// Keep your existing page component below this function...
-"use client";
+"use client"; // This MUST be on Line 1
 
 import { useParams } from "next/navigation";
-import { CheckCircle2, Clock, FileText, IndianRupee, ShieldCheck, ArrowRight, Gavel, ShieldAlert, Stethoscope, Landmark, FileDigit, Building, FileCheck, CarFront } from "lucide-react";
+import { 
+  CheckCircle2, Clock, FileText, IndianRupee, ShieldCheck, 
+  ArrowRight, Gavel, ShieldAlert, Stethoscope, Landmark, 
+  FileDigit, Building, FileCheck, CarFront 
+} from "lucide-react";
 import Link from "next/link";
 
-// 1. DATA ENGINE (The missing variable that caused your error)
+// 1. DATA ENGINE
 const SERVICES_DATA: Record<string, any> = {
   "police": {
     title: "Police Complaint Assistance",
@@ -111,17 +100,19 @@ const SERVICES_DATA: Record<string, any> = {
   }
 };
 
+// 2. SERVER FUNCTION (Keep this at the bottom if using "use client")
+export async function generateStaticParams() {
+  const ids = ["police", "consumer", "cyber", "itr", "gst", "challan", "registration", "ipo"];
+  return ids.map((id) => ({ id }));
+}
+
 export default function ServiceDetailsPage() {
   const params = useParams();
   const id = params.id as string;
-  
-  // Look up the service data, fallback to police if ID is wrong
   const service = SERVICES_DATA[id] || SERVICES_DATA["police"];
 
   return (
     <div className="min-h-screen bg-white font-sans selection:bg-blue-100">
-      
-      {/* 1. REFINED STICKY HEADER */}
       <header className="fixed top-0 w-full bg-white/80 backdrop-blur-xl z-50 border-b border-slate-100 px-6 py-4">
         <div className="max-w-5xl mx-auto">
           <Link href="/" className="font-black text-xl tracking-tighter">
@@ -131,8 +122,6 @@ export default function ServiceDetailsPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-6 pt-32 pb-32">
-        
-        {/* 2. REFINED HEADER (Smaller font as requested) */}
         <div className="mb-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
             Verified Legal Service
@@ -145,7 +134,6 @@ export default function ServiceDetailsPage() {
           </p>
         </div>
 
-        {/* 3. PRICING & TIMELINE STRIP */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-16">
           <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
             <p className="text-[10px] font-black uppercase text-slate-400 mb-1 tracking-widest">Fixed Professional Fee</p>
@@ -157,9 +145,7 @@ export default function ServiceDetailsPage() {
           </div>
         </div>
 
-        {/* 4. DETAILS GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {/* Features */}
           <div>
             <h2 className="text-xl font-black mb-8 border-b border-slate-100 pb-4">Our Process</h2>
             <div className="space-y-6">
@@ -174,7 +160,6 @@ export default function ServiceDetailsPage() {
             </div>
           </div>
 
-          {/* Docs required (High-Contrast Funnel Box) */}
           <div className="bg-blue-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-blue-100 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10">
               {service.icon}
@@ -192,7 +177,6 @@ export default function ServiceDetailsPage() {
           </div>
         </div>
 
-        {/* 5. BOTTOM STICKY CTA (The Funnel "Close") */}
         <div className="fixed bottom-0 left-0 w-full p-6 bg-white/80 backdrop-blur-xl border-t border-slate-100 z-50">
           <div className="max-w-4xl mx-auto">
             <Link 
@@ -203,7 +187,6 @@ export default function ServiceDetailsPage() {
             </Link>
           </div>
         </div>
-
       </main>
     </div>
   );
