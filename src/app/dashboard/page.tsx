@@ -163,7 +163,7 @@ function ActionCard({ icon, label, color }: any) {
   };
 
   return (
-    <button className={`group p-6 rounded-[2rem] transition-all duration-500 flex flex-col items-center gap-3 border border-transparent hover:shadow-xl ${colors[color].split(' ').slice(0, 2).join(' ')} hover:text-white`}>
+    <button className={`group p-6 rounded-4xl transition-all duration-500 flex flex-col items-center gap-3 border border-transparent hover:shadow-xl ${colors[color].split(' ').slice(0, 2).join(' ')} hover:text-white`}>
       <div className="transition-transform group-hover:scale-110">
         {icon}
       </div>
