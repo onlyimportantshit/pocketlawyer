@@ -5,20 +5,27 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Scale, FileText, Briefcase, ChevronRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+// 1. IMPROVED REVEAL VARIANTS
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+    transition: { 
+      staggerChildren: 0.15, // Delay between each child element
+      delayChildren: 0.1 
+    }
   }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 40 }, // Starts lower for a more dramatic reveal
   visible: { 
     opacity: 1, 
     y: 0, 
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } 
+    transition: { 
+      duration: 0.8, 
+      ease: [0.16, 1, 0.3, 1] as const 
+    } 
   }
 };
 
@@ -54,27 +61,40 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Reduced Hero Height from h-screen to h-[85vh] */}
+      {/* HERO SECTION WITH REVEAL */}
       <section className="relative h-[85vh] flex flex-col items-center justify-center px-6 overflow-hidden">
-        <motion.div style={{ y: textY, opacity }} className="text-center z-10">
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="inline-block bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+        <motion.div 
+          style={{ y: textY, opacity }} 
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="text-center z-10"
+        >
+          <motion.div variants={itemVariants} className="inline-block bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6">
             Digital-First Legal Resolution
           </motion.div>
-          <h1 className="text-6xl md:text-[120px] font-black tracking-tighter leading-[0.85] mb-8 text-slate-900">
+          <motion.h1 variants={itemVariants} className="text-6xl md:text-[120px] font-black tracking-tighter leading-[0.85] mb-8 text-slate-900">
             Legal stress. <br />
             <span className="text-blue-600 italic">De-coded.</span>
-          </h1>
-          <Link href="#services" className="group bg-blue-600 text-white font-black py-5 px-14 rounded-[2.5rem] hover:bg-slate-900 transition-all shadow-2xl shadow-blue-200 inline-flex items-center gap-3 text-xl">
-            Start Resolution <ArrowRight className="group-hover:translate-x-2 transition-transform" />
-          </Link>
+          </motion.h1>
+          <motion.div variants={itemVariants}>
+            <Link href="#services" className="group bg-blue-600 text-white font-black py-5 px-14 rounded-[2.5rem] hover:bg-slate-900 transition-all shadow-2xl shadow-blue-200 inline-flex items-center gap-3 text-xl">
+              Start Resolution <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+            </Link>
+          </motion.div>
         </motion.div>
         <motion.div style={{ y: blobY }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/10 blur-[100px] rounded-full -z-10" />
       </section>
 
-      {/* Reduced py-40 to py-20 and mb-24 to mb-12 */}
+      {/* SERVICES SECTION WITH SCROLL REVEAL */}
       <section id="services" className="px-6 py-20 bg-slate-50 relative z-20 rounded-t-[4rem]">
         <div className="max-w-7xl mx-auto">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={containerVariants}>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible" // Triggers when scrolled into view
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
             <motion.div variants={itemVariants} className="mb-12 text-center md:text-left">
               <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900">Choose a path.</h2>
               <div className="h-2 w-32 bg-blue-600 rounded-full mt-3 mx-auto md:mx-0" />
@@ -121,15 +141,22 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Reduced py-40 to py-24 */}
+      {/* FINAL CTA WITH REVEAL */}
       <section className="px-6 py-24 text-center">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 text-slate-900">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={containerVariants}
+        >
+          <motion.h2 variants={itemVariants} className="text-4xl md:text-6xl font-black tracking-tighter mb-10 text-slate-900">
             Finish the race. <br /> Get legal help today.
-          </h2>
-          <Link href="/submit-case" className="bg-blue-600 text-white font-black py-7 px-16 rounded-[3rem] text-2xl hover:scale-105 transition-all inline-block shadow-2xl shadow-blue-200">
-            Start Your Case
-          </Link>
+          </motion.h2>
+          <motion.div variants={itemVariants}>
+            <Link href="/submit-case" className="bg-blue-600 text-white font-black py-7 px-16 rounded-[3rem] text-2xl hover:scale-105 transition-all inline-block shadow-2xl shadow-blue-200">
+              Start Your Case
+            </Link>
+          </motion.div>
         </motion.div>
       </section>
     </main>
@@ -138,7 +165,11 @@ export default function LandingPage() {
 
 function BentoCard({ title, price, icon, color, items, span }: any) {
   return (
-    <motion.div variants={itemVariants} whileHover={{ y: -5, scale: 1.01 }} className={`${span} ${color} p-8 rounded-[3rem] shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden relative group`}>
+    <motion.div 
+      variants={itemVariants} // Inherits from parent container reveal
+      whileHover={{ y: -5, scale: 1.01 }} 
+      className={`${span} ${color} p-8 rounded-[3rem] shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden relative group`}
+    >
       <div className="flex justify-between items-start mb-10">
         <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10">
           {icon}
