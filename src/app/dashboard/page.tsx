@@ -22,7 +22,7 @@ export default function DashboardPage() {
         window.location.href = "/login";
         return;
       }
-      setUserEmail(user.email);
+      setUserEmail(user.email ?? null);
 
       const { data: userCases } = await supabase
         .from('cases')
