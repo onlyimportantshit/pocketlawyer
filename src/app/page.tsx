@@ -2,10 +2,9 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { Scale, FileText, Briefcase, ChevronRight, ArrowRight, ShieldCheck, Building, CarFront } from "lucide-react";
+import { Scale, FileText, Briefcase, ChevronRight, ArrowRight, Gavel, Stethoscope, Landmark } from "lucide-react";
 import Link from "next/link";
 
-// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -19,10 +18,7 @@ const itemVariants = {
   visible: { 
     opacity: 1, 
     y: 0, 
-    transition: { 
-      duration: 0.8, 
-      ease: [0.16, 1, 0.3, 1] as const 
-    } 
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } 
   }
 };
 
@@ -41,7 +37,6 @@ export default function LandingPage() {
   return (
     <main ref={containerRef} className="relative bg-white text-slate-900 selection:bg-blue-100 overflow-x-hidden">
       
-      {/* BRIEFLY NAV */}
       <nav className="fixed top-0 w-full bg-white/60 backdrop-blur-2xl z-50 border-b border-slate-100 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2.5 group cursor-pointer hover:no-underline">
@@ -55,7 +50,7 @@ export default function LandingPage() {
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 leading-none">Legal & Compliance</span>
             </div>
           </Link>
-          <Link href="/login" className="bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg shadow-slate-200">
+          <Link href="/login" className="bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-full hover:scale-105 transition-all">
             Client Login
           </Link>
         </div>
@@ -66,7 +61,7 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="inline-block bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8">
             Digital-First Legal Resolution
           </motion.div>
-          <h1 className="text-7xl md:text-[140px] font-black tracking-tighter leading-[0.8] mb-10">
+          <h1 className="text-7xl md:text-[140px] font-black tracking-tighter leading-[0.8] mb-10 text-slate-900">
             Legal stress. <br />
             <span className="text-blue-600 italic">De-coded.</span>
           </h1>
@@ -81,45 +76,50 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={containerVariants}>
             <motion.div variants={itemVariants} className="mb-24 text-center md:text-left">
-              <h2 className="text-5xl md:text-8xl font-black tracking-tighter">Choose a path.</h2>
+              <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-900">Choose a path.</h2>
               <div className="h-3 w-40 bg-blue-600 rounded-full mt-4 mx-auto md:mx-0" />
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              {/* PERSONAL LEGAL */}
               <BentoCard 
-                span="md:col-span-8"
-                title="Everyday Legal"
+                span="md:col-span-12"
+                title="Personal Legal"
                 price="499"
                 icon={<Scale />}
                 color="bg-blue-600 text-white"
                 items={[
                   { name: "Traffic Challans", href: "/services/challan" },
-                  { name: "Property Deed Check", href: "/services/property" }
+                  { name: "Hospital Negligence", href: "/services/hospital" },
+                  { name: "Insurance Handling", href: "/services/insurance" },
+                  { name: "Police Complaints", href: "/services/police" }
                 ]}
               />
+
+              {/* FILING */}
               <BentoCard 
-                span="md:col-span-4"
-                title="Tax & Compliance"
+                span="md:col-span-6"
+                title="Filing"
                 price="999"
                 icon={<FileText />}
                 color="bg-white text-slate-900 border border-slate-200"
-                items={[{ name: "ITR Filing", href: "/services/itr" }]}
+                items={[
+                  { name: "ITR Filing", href: "/services/itr" },
+                  { name: "GST Returns", href: "/services/gst" }
+                ]}
               />
+
+              {/* BUSINESS */}
               <BentoCard 
-                span="md:col-span-4"
+                span="md:col-span-6"
                 title="Business"
-                price="5,999"
+                price="3,999"
                 icon={<Briefcase />}
                 color="bg-slate-900 text-white"
-                items={[{ name: "Startup Incorporation", href: "/services/incorporation" }]}
-              />
-              <BentoCard 
-                span="md:col-span-8"
-                title="Premium Support"
-                price="7,999"
-                icon={<ShieldCheck />}
-                color="bg-white text-slate-900 border border-slate-200"
-                items={[{ name: "Pro-Athlete Contracts", href: "/services/athlete" }]}
+                items={[
+                  { name: "IPO Consultancy", href: "/services/ipo" },
+                  { name: "Company Incorporation", href: "/services/registration" }
+                ]}
               />
             </div>
           </motion.div>
@@ -128,10 +128,10 @@ export default function LandingPage() {
 
       <section className="px-6 py-40 text-center">
         <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }}>
-          <h2 className="text-4xl md:text-7xl font-black tracking-tighter mb-12">
+          <h2 className="text-4xl md:text-7xl font-black tracking-tighter mb-12 text-slate-900">
             Finish the race. <br /> Get legal help today.
           </h2>
-          <Link href="/submit-case" className="bg-blue-600 text-white font-black py-8 px-20 rounded-[3rem] text-2xl hover:scale-105 active:scale-95 transition-all inline-block shadow-2xl shadow-blue-200">
+          <Link href="/submit-case" className="bg-blue-600 text-white font-black py-8 px-20 rounded-[3rem] text-2xl hover:scale-105 transition-all inline-block shadow-2xl shadow-blue-200">
             Start Your Case
           </Link>
         </motion.div>
