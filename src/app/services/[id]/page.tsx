@@ -1,3 +1,18 @@
+// This function tells Next.js which IDs to pre-render for the static export
+export async function generateStaticParams() {
+  // These must match the 'ids' you used in your Home page FunnelBox
+  const ids = [
+    "police", "consumer", "cyber", 
+    "itr", "gst", "challan", 
+    "registration", "ipo"
+  ];
+
+  return ids.map((id) => ({
+    id: id,
+  }));
+}
+
+// Keep your existing page component below this function...
 "use client";
 
 import { useParams } from "next/navigation";
