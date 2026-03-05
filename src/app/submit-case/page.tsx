@@ -1,284 +1,181 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  CheckCircle2, AlertCircle, ArrowRight, ArrowLeft, 
-  MapPin, Calendar, UserX, ChevronDown, ChevronRight, Scale, 
-  FileText, Briefcase, ShieldCheck, CreditCard, Lock, Zap,
-  UploadCloud, MessageSquare, Phone, Mail, Home as HomeIcon, Clock
-} from "lucide-react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { Scale, FileText, Briefcase, ChevronRight, ArrowRight, ShieldCheck, Users, Star, Globe } from "lucide-react";
 import Link from "next/link";
 
-export default function SubmitCasePage() {
-  const [step, setStep] = useState(1);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+// Animation Variants for Scroll Reveal
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.2 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+  }
+};
+
+export default function LandingPage() {
+  const containerRef = useRef(null);
   
-  // --- Form States (Compulsory) ---
-  const [services, setServices] = useState<any[]>([]);
-  const [selectedService, setSelectedService] = useState<any>(null);
-  const [issue, setIssue] = useState("");
-  const [location, setLocation] = useState("");
-  const [incidentDate, setIncidentDate] = useState("");
-  const [oppositeParty, setOppositeParty] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [fullAddress, setFullAddress] = useState("");
+  // 1. PARALLAX LOGIC
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
 
-  useEffect(() => {
-    async function fetchServices() {
-      const { data } = await supabase.from('services').select('*');
-      if (data && data.length > 0) {
-        setServices(data);
-        setSelectedService(data[0]);
-      }
-    }
-    fetchServices();
-  }, []);
+  // Smooth out the scroll progress for a premium feel
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-  const isStepComplete = () => {
-    switch(step) {
-      case 1: return !!selectedService;
-      case 2: return issue.trim().length >= 10 && oppositeParty.trim().length > 0;
-      case 3: return phone.trim().length >= 10 && email.includes('@') && fullAddress.trim().length > 5;
-      case 4: return true; 
-      case 5: return true;
-      default: return false;
-    }
-  };
+  // Text moves up slightly slower; background blob moves up faster
+  const textY = useTransform(smoothProgress, [0, 1], [0, 250]);
+  const blobY = useTransform(smoothProgress, [0, 1], [0, -200]);
+  const opacity = useTransform(smoothProgress, [0, 0.5], [1, 0]);
 
-  // --- TESTING MODE: IMMEDIATE SUCCESS ---
-  const handlePayment = async () => {
-    setIsSubmitting(true);
-    // Directly saving to database without payment gateway for testing
-    await saveCaseToDatabase();
-  };
+  return (
+    <main ref={containerRef} className="relative bg-white text-slate-900 selection:bg-blue-100 overflow-x-hidden">
+      
+      {/* GLASS NAVIGATION */}
+      <nav className="fixed top-0 w-full bg-white/60 backdrop-blur-2xl z-50 border-b border-slate-100 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="font-black text-2xl tracking-tighter italic">P<span className="text-blue-600">L</span></div>
+          <Link href="/login" className="bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg shadow-slate-200">
+            Client Login
+          </Link>
+        </div>
+      </nav>
 
-  const saveCaseToDatabase = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-        setErrorMsg("Please login to submit your case.");
-        setIsSubmitting(false);
-        return;
-    }
-
-    const { error } = await supabase.from('cases').insert({
-      user_id: user.id,
-      service_id: selectedService.id,
-      issue_description: issue,
-      location: location || 'Not Specified',
-      incident_date: incidentDate || new Date().toISOString(),
-      opposite_party_name: oppositeParty,
-      client_phone: phone,
-      client_address: fullAddress,
-      status: 'paid_&_submitted'
-    });
-
-    if (!error) {
-        setIsSubmitted(true);
-    } else {
-        setErrorMsg(error.message);
-        setIsSubmitting(false);
-    }
-  };
-
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md">
-          <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8">
-            <CheckCircle2 className="w-12 h-12 text-blue-600" />
-          </div>
-          <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tighter">Case Secured.</h2>
-          <p className="text-slate-500 font-medium mb-10 leading-relaxed">
-            Your case is live. Our verified legal experts have been notified and will begin review immediately.
-          </p>
-          <Link href="/dashboard" className="block w-full bg-slate-900 text-white font-black py-5 rounded-3xl shadow-xl hover:bg-blue-600 transition-all">
-            Open Dashboard
+      {/* HERO WITH PARALLAX & MOTION */}
+      <section className="relative h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
+        <motion.div style={{ y: textY, opacity }} className="text-center z-10">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-block bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8"
+          >
+            Digital-First Legal Resolution
+          </motion.div>
+          <h1 className="text-7xl md:text-[140px] font-black tracking-tighter leading-[0.8] mb-10">
+            Legal stress. <br />
+            <span className="text-blue-600 italic">De-coded.</span>
+          </h1>
+          <Link href="#services" className="group bg-blue-600 text-white font-black py-6 px-16 rounded-[2rem] hover:bg-slate-900 transition-all shadow-2xl shadow-blue-200 inline-flex items-center gap-3 text-xl">
+            Start Resolution <ArrowRight className="group-hover:translate-x-2 transition-transform" />
           </Link>
         </motion.div>
-      </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 pb-20">
-      <header className="bg-white/70 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-50 px-6 py-4">
-        <div className="max-w-3xl mx-auto flex justify-between items-center">
-          <Link href="/" className="font-black text-xl tracking-tighter">Project<span className="text-blue-600">Law</span></Link>
-          <div className="flex gap-1.5">
-            {[1, 2, 3, 4, 5].map((s) => (
-              <div key={s} className={`h-1 w-8 rounded-full transition-all duration-500 ${step >= s ? 'bg-blue-600' : 'bg-slate-200'}`} />
-            ))}
-          </div>
+        {/* PARALLAX DECORATION */}
+        [Image of parallax layers diagram showing background elements moving slower than foreground elements]
+        <motion.div 
+          style={{ y: blobY }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/10 blur-[120px] rounded-full -z-10" 
+        />
+      </section>
+
+      {/* SCROLL REVEAL BENTO GRID */}
+      <section id="services" className="px-6 py-40 bg-slate-50 relative z-20 rounded-t-[4rem]">
+        <div className="max-w-7xl mx-auto">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
+            <motion.div variants={itemVariants} className="mb-24 text-center md:text-left">
+              <h2 className="text-5xl md:text-8xl font-black tracking-tighter">Choose a path.</h2>
+              <div className="h-3 w-40 bg-blue-600 rounded-full mt-4 mx-auto md:mx-0" />
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              <BentoCard 
+                span="md:col-span-8"
+                title="Personal Legal"
+                price="1,999"
+                icon={<Scale />}
+                color="bg-blue-600 text-white"
+                items={["Police Complaint", "Cyber Fraud", "Consumer Court"]}
+              />
+              <BentoCard 
+                span="md:col-span-4"
+                title="Tax/ITR"
+                price="999"
+                icon={<FileText />}
+                color="bg-white text-slate-900 border border-slate-200"
+                items={["ITR Filing", "GST Returns"]}
+              />
+              <BentoCard 
+                span="md:col-span-4"
+                title="Business"
+                price="3,999"
+                icon={<Briefcase />}
+                color="bg-slate-900 text-white"
+                items={["Trademark", "Incorporation"]}
+              />
+              <BentoCard 
+                span="md:col-span-8"
+                title="Premium Consultation"
+                price="Custom"
+                icon={<Globe />}
+                color="bg-white text-slate-900 border border-slate-200"
+                items={["IPO Strategy", "Athlete Contracts", "International Law"]}
+              />
+            </div>
+          </motion.div>
         </div>
-      </header>
+      </section>
 
-      <main className="max-w-2xl mx-auto px-6 mt-12">
-        <div className="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-sm border border-slate-100 min-h-[600px] flex flex-col relative overflow-hidden">
-          
-          <AnimatePresence mode="wait">
-            
-            {step === 1 && (
-              <motion.div key="1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-1">
-                <VisualProcessMap />
-                <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Select Solution *</h2>
-                <div className="relative mt-8">
-                  <button onClick={() => setIsOpen(!isOpen)} className="w-full bg-slate-50 border border-slate-100 rounded-3xl p-6 text-left flex justify-between items-center group">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-blue-600 uppercase mb-1 tracking-widest">{selectedService?.category}</span>
-                      <span className="text-lg font-black text-slate-900">{selectedService?.name || "Loading..."}</span>
-                    </div>
-                    <ChevronDown className={`transition-transform duration-500 ${isOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {isOpen && (
-                    <div className="absolute left-0 right-0 mt-2 bg-white/95 border border-slate-100 rounded-3xl shadow-2xl z-50 p-4 max-h-60 overflow-y-auto backdrop-blur-xl">
-                      {services.map(s => (
-                        <button key={s.id} onClick={() => { setSelectedService(s); setIsOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-blue-50 rounded-xl font-bold text-slate-700 transition-colors">{s.name}</button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
+      {/* FINAL MOTION CTA */}
+      <section className="px-6 py-40 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+        >
+          <h2 className="text-4xl md:text-7xl font-black tracking-tighter mb-12">
+            Finish the race. <br /> Get legal help today.
+          </h2>
+          <Link href="/login" className="bg-blue-600 text-white font-black py-8 px-20 rounded-[3rem] text-2xl hover:scale-105 active:scale-95 transition-all inline-block shadow-3xl shadow-blue-100">
+            Start Now
+          </Link>
+        </motion.div>
+      </section>
 
-            {step === 2 && (
-              <motion.div key="2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-1">
-                <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">The Incident *</h2>
-                <p className="text-slate-400 text-sm font-medium mb-10">Briefly explain your situation.</p>
-                <textarea required value={issue} onChange={(e) => setIssue(e.target.value)} placeholder="Minimum 10 characters..." className="w-full bg-slate-50 rounded-3xl p-6 text-sm font-medium outline-none h-40 mb-6 border-none resize-none focus:ring-2 focus:ring-blue-100" />
-                <div className="bg-slate-50 p-6 rounded-3xl">
-                    <label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Opposite Party Name *</label>
-                    <input required value={oppositeParty} onChange={(e) => setOppositeParty(e.target.value)} className="bg-transparent border-none outline-none font-bold text-lg w-full" placeholder="e.g. Amazon India" />
-                </div>
-              </motion.div>
-            )}
-
-            {step === 3 && (
-              <motion.div key="3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-1">
-                <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Your Details *</h2>
-                <div className="space-y-4 mt-8">
-                    <DetailInput icon={<Phone className="w-3 h-3"/>} label="Phone Number *" value={phone} onChange={setPhone} type="tel" placeholder="10-digit mobile" />
-                    <DetailInput icon={<Mail className="w-3 h-3"/>} label="Email Address *" value={email} onChange={setEmail} type="email" placeholder="you@example.com" />
-                    <div className="bg-slate-50 p-5 rounded-3xl">
-                        <label className="text-[10px] font-black uppercase text-slate-400 flex items-center gap-2 mb-1"><HomeIcon className="w-3 h-3"/> Full Address *</label>
-                        <textarea required value={fullAddress} onChange={(e) => setFullAddress(e.target.value)} className="bg-transparent border-none outline-none font-bold text-sm w-full h-20 resize-none" placeholder="House No, City, Pincode" />
-                    </div>
-                </div>
-              </motion.div>
-            )}
-
-            {step === 4 && (
-              <motion.div key="4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex-1">
-                <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Our Commitment.</h2>
-                <div className="space-y-8 mt-10">
-                    <RoadmapItem icon={<Clock className="w-6 h-6" />} time="2 Hours" title="Lawyer Assignment" desc="An expert will be assigned to review your file." />
-                    <RoadmapItem icon={<FileText className="w-6 h-6" />} time="6 Hours" title="Drafting Begins" desc="Our team starts drafting your legal notice." />
-                    <RoadmapItem icon={<Zap className="w-6 h-6" />} time="24 Hours" title="Final Delivery" desc="The case is served or filed officially." />
-                </div>
-              </motion.div>
-            )}
-
-            {step === 5 && (
-              <motion.div key="5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex-1">
-                <h2 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Final Step.</h2>
-                <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden mb-10 mt-10">
-                    <div className="absolute top-0 right-0 p-10 opacity-10"><Scale className="w-20 h-20" /></div>
-                    <div className="relative z-10">
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-2">Total Fee</p>
-                        <h3 className="text-5xl font-black tracking-tight mb-8">₹{selectedService?.starting_price.toLocaleString()}</h3>
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest"><Lock className="w-4 h-4" /> Secure Submission</div>
-                    </div>
-                </div>
-                <p className="text-xs text-slate-400 italic text-center px-4">"Testing mode enabled: Your case will be saved immediately."</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className="mt-12 flex gap-4">
-            {step > 1 && (
-              <button onClick={() => setStep(step - 1)} className="p-6 rounded-3xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all"><ArrowLeft /></button>
-            )}
-            <button 
-                onClick={() => step < 5 ? setStep(step + 1) : handlePayment()} 
-                disabled={!isStepComplete() || isSubmitting}
-                className={`flex-1 font-black py-6 rounded-[1.5rem] flex justify-center items-center gap-3 transition-all ${isStepComplete() ? 'bg-blue-600 text-white shadow-2xl shadow-blue-200' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
-            >
-                {step === 5 ? (isSubmitting ? "Submitting..." : `Confirm Case`) : "Continue"}
-                <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </main>
-    </div>
+    </main>
   );
 }
 
-// --- HELPERS ---
-function VisualProcessMap() {
-    const roadmapSteps = [
-      { icon: <MessageSquare className="w-5 h-5"/>, title: "1. Details", color: "blue" },
-      { icon: <UserX className="w-5 h-5"/>, title: "2. Party", color: "emerald" },
-      { icon: <CreditCard className="w-5 h-5"/>, title: "3. Secure", color: "indigo" },
-      { icon: <ShieldCheck className="w-5 h-5"/>, title: "4. Resolve", color: "rose" },
-    ];
-    return (
-      <div className="bg-slate-50 rounded-[2rem] p-8 mb-4 relative">
-        <div className="grid grid-cols-4 relative z-10">
-          <div className="absolute top-6 left-[12%] right-[12%] h-0.5 bg-slate-200 -z-10" />
-          {roadmapSteps.map((s, i) => (
-            <div key={i} className="flex flex-col items-center">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white mb-2 shadow-lg ${getColorClass(s.color)}`}>{s.icon}</div>
-              <p className="font-bold text-[9px] text-slate-900 uppercase tracking-tighter">{s.title}</p>
-            </div>
-          ))}
+function BentoCard({ title, price, icon, color, items, span }: any) {
+  return (
+    <motion.div 
+      variants={itemVariants}
+      whileHover={{ y: -10, scale: 1.01 }}
+      className={`${span} ${color} p-10 rounded-[3.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative group`}
+    >
+      <div className="flex justify-between items-start mb-12">
+        <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10">
+          {icon}
+        </div>
+        <div className="text-right uppercase tracking-widest text-[10px] font-black opacity-80">
+          Starts At <span className="text-2xl block">₹{price}</span>
         </div>
       </div>
-    );
-  }
-
-function RoadmapItem({ icon, time, title, desc }: any) {
-    return (
-        <div className="flex gap-6 items-start">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">{icon}</div>
-            <div>
-                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">{time}</p>
-                <h4 className="font-bold text-slate-900 mb-1">{title}</h4>
-                <p className="text-slate-500 text-xs leading-relaxed">{desc}</p>
-            </div>
-        </div>
-    );
-}
-
-function DetailInput({ icon, label, value, onChange, type, placeholder }: any) {
-    return (
-        <div className="bg-slate-50 p-5 rounded-3xl focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-            <label className="text-[10px] font-black uppercase text-slate-400 flex items-center gap-2 mb-1">{icon} {label}</label>
-            <input required type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="bg-transparent border-none outline-none font-bold text-sm w-full" />
-        </div>
-    );
-}
-
-function ServiceItem({ name, onClick }: any) {
-  return (
-    <button onClick={onClick} className="w-full text-left px-5 py-4 rounded-xl hover:bg-slate-50 text-sm font-bold text-slate-700 transition-colors flex justify-between items-center group">
-      {name}
-      <ChevronRight className="w-4 h-4 text-slate-200 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-    </button>
+      <h3 className="text-4xl font-black mb-8">{title}</h3>
+      <div className="flex flex-wrap gap-2">
+        {items.map((item: string) => (
+          <div key={item} className="px-6 py-3 rounded-full bg-black/5 backdrop-blur-sm flex justify-between items-center text-xs font-black uppercase tracking-tighter border border-black/5 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
+            {item} <ChevronRight className="w-3 h-3 ml-2" />
+          </div>
+        ))}
+      </div>
+    </motion.div>
   );
-}
-
-function getColorClass(color: string) {
-  switch (color) {
-    case 'blue': return 'bg-blue-600';
-    case 'emerald': return 'bg-emerald-600';
-    case 'indigo': return 'bg-indigo-600';
-    case 'rose': return 'bg-rose-600';
-    default: return 'bg-slate-600';
-  }
 }
