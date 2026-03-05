@@ -51,15 +51,34 @@ export default function SubmitCasePage() {
   const [fullAddress, setFullAddress] = useState("");
 
   useEffect(() => {
-    async function fetchServices() {
-      const { data } = await supabase.from('services').select('*');
+  async function fetchServices() {
+    try {
+      // 1. Fetch BOTH data and error
+      const { data, error } = await supabase.from('services').select('*');
+      
+      // 2. Catch database/connection errors loudly
+      if (error) {
+        console.error("SUPABASE ERROR:", error.message);
+        alert("Database Error: " + error.message);
+        return;
+      }
+
+      // 3. Handle the data safely
       if (data && data.length > 0) {
         setServices(data);
         setSelectedService(data[0]);
+      } else {
+        console.warn("Supabase connected, but the services table is empty.");
+        // Optional fallback so the UI doesn't break:
+        setServices([{ id: 'temp', name: 'No Services Found', category: 'Error', starting_price: 0 }]);
       }
+    } catch (err) {
+      console.error("NETWORK ERROR:", err);
     }
-    fetchServices();
-  }, []);
+  }
+  
+  fetchServices();
+}, []);
 
   const isStepComplete = () => {
     switch(step) {
