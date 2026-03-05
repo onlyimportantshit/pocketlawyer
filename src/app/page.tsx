@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { Scale, FileText, Briefcase, ChevronRight, ArrowRight, Globe, ShieldCheck } from "lucide-react";
+import { Scale, FileText, Briefcase, ChevronRight, ArrowRight, Globe, ShieldCheck } from "lucide-center";
 import Link from "next/link";
 
 const containerVariants = {
@@ -36,13 +36,10 @@ export default function LandingPage() {
   return (
     <main ref={containerRef} className="relative min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-blue-100 overflow-x-hidden">
       
-      {/* --- DYNAMIC MOVABLE BACKGROUND --- */}
+      {/* DYNAMIC MOVABLE BACKGROUND */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        {/* Blob 1: Soft Blue */}
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-400/10 blur-[120px] rounded-full animate-float" />
-        {/* Blob 2: Subtle Indigo */}
         <div className="absolute bottom-[10%] right-[-5%] w-[40%] h-[40%] bg-indigo-400/10 blur-[120px] rounded-full animate-float [animation-delay:2s]" />
-        {/* Blob 3: Very Light Slate */}
         <div className="absolute top-[40%] left-[30%] w-[30%] h-[30%] bg-slate-300/20 blur-[100px] rounded-full animate-float [animation-duration:25s]" />
       </div>
 
@@ -89,7 +86,7 @@ export default function LandingPage() {
 
       <section id="services" className="px-6 py-20 relative z-20">
         <div className="max-w-7xl mx-auto">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={containerVariants}>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={containerVariants}>
             <motion.div variants={itemVariants} className="mb-12 text-center md:text-left">
               <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900">Choose a path.</h2>
               <div className="h-2 w-32 bg-blue-600 rounded-full mt-3 mx-auto md:mx-0" />
@@ -203,8 +200,12 @@ function BentoCard({ title, price, icon, color, items, span }: any) {
       <h3 className="text-3xl font-black mb-6 tracking-tight text-left">{title}</h3>
       <div className="flex flex-wrap gap-2">
         {items.map((item: any) => (
-          <Link key={item.name} href={item.href} className="px-5 py-2.5 rounded-full bg-black/5 backdrop-blur-sm flex justify-between items-center text-[10px] font-black uppercase tracking-tighter border border-black/5 hover:bg-blue-600 hover:text-white transition-all cursor-pointer group/btn">
-            {item.name} <ChevronRight className="w-3 h-3 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+          <Link 
+            key={item.name} 
+            href={item.href} 
+            className="px-5 py-2.5 rounded-full bg-white text-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/20 flex justify-between items-center text-[10px] font-black uppercase tracking-tighter hover:scale-110 hover:shadow-[0_20px_50px_rgba(0,0,0,0.2)] active:scale-95 transition-all duration-300 cursor-pointer group/btn"
+          >
+            {item.name} <ChevronRight className="w-3 h-3 ml-2 group-hover/btn:translate-x-1 transition-transform text-blue-600" />
           </Link>
         ))}
       </div>
