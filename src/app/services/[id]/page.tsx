@@ -38,7 +38,7 @@ const SERVICES_DATA: Record<string, any> = {
     title: "Pro-Athlete Contract Review",
     price: 7999,
     icon: <ShieldCheck className="w-8 h-8" />,
-    desc: "Keep your focus strictly on training for the 2030 Winter Olympics, while we secure your speed skating sponsorships, team agreements, and liability clauses.",
+    desc: "Secure your speed skating sponsorships and team agreements so you can stay focused on your training for the 2030 Winter Olympics.",
     docs: ["Draft Contract/Agreement", "Sponsor Details", "Previous Agreements"],
     features: ["Clause-by-Clause Analysis", "Negotiation Strategy", "Liability Protection"]
   },
@@ -52,8 +52,15 @@ const SERVICES_DATA: Record<string, any> = {
   }
 };
 
-export default function ServiceClient({ id }: { id: string }) {
-  // Default to challan if ID isn't found, preventing crashes
+// FIX: We are now using 'params' which is automatically sent by Next.js
+export default function ServiceClient() {
+  const params = useParams(); // Using the hook for bulletproof ID detection
+  const id = params?.id as string;
+
+  // This log will show up in your F12 browser console to help you debug
+  console.log("The website detected this ID from the URL:", id);
+
+  // Default to challan ONLY if the ID isn't found in our list
   const service = SERVICES_DATA[id] || SERVICES_DATA["challan"];
 
   return (
@@ -85,7 +92,34 @@ export default function ServiceClient({ id }: { id: string }) {
           <p className="text-lg text-slate-500 max-w-2xl leading-relaxed">{service.desc}</p>
         </div>
         
-        {/* ... (The rest of your existing UI code stays here) ... */}
+        {/* Document Checklist Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <h3 className="text-xl font-black mb-6 flex items-center gap-2">
+              <FileText className="text-blue-600" /> Required Documents
+            </h3>
+            <ul className="space-y-4">
+              {service.docs.map((doc: string) => (
+                <li key={doc} className="flex items-center gap-3 text-slate-600 font-medium text-sm">
+                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" /> {doc}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <h3 className="text-xl font-black mb-6 flex items-center gap-2">
+              <ShieldCheck className="text-emerald-500" /> Inclusions
+            </h3>
+            <ul className="space-y-4">
+              {service.features.map((feature: string) => (
+                <li key={feature} className="flex items-center gap-3 text-slate-600 font-medium text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
         
         <div className="mt-12">
           <Link href="/submit-case" className="bg-blue-600 text-white py-6 rounded-[2.5rem] block text-center font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-blue-200">
