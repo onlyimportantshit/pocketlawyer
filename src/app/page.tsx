@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { Scale, FileText, Briefcase, ChevronRight, ArrowRight, Globe, ShieldCheck } from "lucide-center";
+import { Scale, FileText, Briefcase, ChevronRight, ArrowRight, Globe, ShieldCheck } from "lucide-react"; // FIXED: Changed 'lucide-center' to 'lucide-react'
 import Link from "next/link";
 
 const containerVariants = {
