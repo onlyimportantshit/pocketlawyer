@@ -2,8 +2,9 @@
 
 import { useParams } from "next/navigation";
 import { 
-  CheckCircle2, Clock, FileText, ShieldCheck, 
-  ArrowRight, FileDigit, Building, CarFront, Briefcase
+  CheckCircle2, FileText, ShieldCheck, Gavel, 
+  Stethoscope, Landmark, ShieldAlert, FileDigit, Building, 
+  CarFront, Briefcase, FileCheck
 } from "lucide-react";
 import Link from "next/link";
 
@@ -16,37 +17,61 @@ const SERVICES_DATA: Record<string, any> = {
     docs: ["Vehicle RC", "Challan Number", "Driving License"],
     features: ["Court Representation", "Fine Negotiation", "Clearance Certificate"]
   },
+  "hospital": {
+    title: "Hospital Negligence Case",
+    price: 1999,
+    icon: <Stethoscope className="w-8 h-8" />,
+    desc: "Hold medical institutions accountable for surgical errors, diagnostic negligence, or deficient care.",
+    docs: ["Medical Records", "Hospital Bills", "Discharge Summary"],
+    features: ["Medical Board Filing", "Expert Legal Notice", "Damage Assessment"]
+  },
+  "insurance": {
+    title: "Insurance Handling",
+    price: 1999,
+    icon: <Landmark className="w-8 h-8" />,
+    desc: "Recover your rightful claim from insurance companies for health, life, or motor disputes.",
+    docs: ["Policy Copy", "Claim Rejection Letter", "Assessment Reports"],
+    features: ["Claim File Review", "Ombudsman Representation", "Legal Action Support"]
+  },
+  "police": {
+    title: "Police Complaint Assistance",
+    price: 1999,
+    icon: <Gavel className="w-8 h-8" />,
+    desc: "Expert drafting and filing of police complaints for criminal matters, theft, or harassment cases.",
+    docs: ["Identity Proof (Aadhar/PAN)", "Evidence (Photos/Videos/Logs)", "Incident Summary"],
+    features: ["Expert Legal Drafting", "Jurisdiction Analysis", "Filing Verification"]
+  },
   "itr": {
-    title: "Income Tax Return (ITR) Filing",
+    title: "ITR Filing (CA Assisted)",
     price: 999,
     icon: <FileDigit className="w-8 h-8" />,
     desc: "Seamless Income Tax Return filing managed by verified Chartered Accountants.",
-    docs: ["Form 16 / Income Proof", "Bank Statements", "Investment Proofs (80C, etc.)"],
+    docs: ["Form 16", "Bank Statements", "Investment Proofs"],
     features: ["CA Review & Filing", "Tax Optimization", "Notice Protection"]
   },
-  "property": {
-    title: "Property Deed & Registration Check",
-    price: 4999,
+  "gst": {
+    title: "GST Return Filing",
+    price: 999,
     icon: <Building className="w-8 h-8" />,
-    desc: "Whether you are reviewing a standard home deed or securing a 28,000 sq ft land parcel in Zora, Raipur, we ensure your title is clear and free of encumbrances.",
-    docs: ["Sale Deed Copy", "Previous Chain Agreements", "Property Tax Receipts"],
-    features: ["Title Search Report", "Encumbrance Check", "Legal Vetting"]
+    desc: "Monthly or quarterly GST compliance for freelancers and small businesses.",
+    docs: ["Sales Invoices", "Purchase Records", "GST Login"],
+    features: ["Monthly Compliance", "Data Reconciliation", "Penalty Prevention"]
   },
-  "athlete": {
-    title: "Pro-Athlete Contract Review",
-    price: 7999,
-    icon: <ShieldCheck className="w-8 h-8" />,
-    desc: "Stay focused on training for the 2030 Winter Olympics. We secure your speed skating sponsorships, team agreements, and liability clauses.",
-    docs: ["Draft Contract/Agreement", "Sponsor Details", "Previous Agreements"],
-    features: ["Clause-by-Clause Analysis", "Negotiation Strategy", "Liability Protection"]
+  "ipo": {
+    title: "IPO Consultancy",
+    price: 3999,
+    icon: <FileCheck className="w-8 h-8" />,
+    desc: "Expert guidance for listing your private company on the stock exchange (NSE/BSE).",
+    docs: ["3 Years Audit Reports", "Incorporation Certificate", "Director KYC"],
+    features: ["DRHP Preparation", "Compliance Audit", "Exchange Liaison"]
   },
-  "incorporation": {
-    title: "Startup Incorporation & GST",
-    price: 5999,
+  "registration": {
+    title: "Company Incorporation",
+    price: 3999,
     icon: <Briefcase className="w-8 h-8" />,
-    desc: "Complete Pvt Ltd Company incorporation including DSC, DIN, MoA/AoA, and initial GST registration.",
+    desc: "Complete Pvt Ltd Company incorporation including DSC, DIN, and MoA/AoA.",
     docs: ["Director PAN & Aadhar", "Address Proof", "Office NOC"],
-    features: ["Incorporation Certificate", "PAN & TAN Allocation", "GST Registration"]
+    features: ["Incorporation Certificate", "PAN & TAN Allocation", "Digital Signatures"]
   }
 };
 
