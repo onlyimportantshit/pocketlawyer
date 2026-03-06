@@ -27,6 +27,7 @@ type BentoCardProps = {
   color: string;
   items: BentoItem[];
   span: string;
+  shimmer?: boolean;
 };
 
 // ── Page ─────────────────────────────────────────────────────────
@@ -40,7 +41,7 @@ export default function LandingPage() {
   return (
     <main ref={containerRef} className="relative bg-[#F5F5F7] text-slate-900 overflow-x-hidden">
 
-      {/* ── Floating Orbs (Apple-style) ── */}
+      {/* ── Floating Orbs ── */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <motion.div
           animate={{ x: [0, 40, -20, 0], y: [0, -60, 30, 0] }}
@@ -78,7 +79,7 @@ export default function LandingPage() {
       </nav>
 
       {/* ── Hero ── */}
-      <section className="relative min-h-[88vh] flex flex-col items-center justify-center px-5 pt-20 pb-10">
+      <section className="relative min-h-[88vh] flex flex-col items-center justify-center px-5 pt-14 pb-10">
         <motion.div style={{ y: textY, opacity: heroOpacity }} className="text-center z-10 w-full max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
@@ -178,8 +179,9 @@ export default function LandingPage() {
                 span="md:col-span-6"
                 title="Filing"
                 price="999"
-                icon={<FileText className="w-5 h-5" />}
-                color="bg-white text-slate-900 border border-black/8"
+                icon={<FileText className="w-5 h-5 text-slate-600" />}
+                color="bg-gradient-to-br from-[#e8e8e8] via-[#f4f4f4] to-[#d0d0d0] text-slate-900 border border-white/80"
+                shimmer
                 items={[
                   { name: "ITR Filing", href: "/services/itr" },
                   { name: "GST Returns", href: "/services/gst" }
@@ -304,16 +306,29 @@ function StatItem({ label, value, icon }: { label: string; value: string; icon: 
   );
 }
 
-function BentoCard({ title, price, icon, color, items, span }: BentoCardProps) {
+function BentoCard({ title, price, icon, color, items, span, shimmer }: BentoCardProps) {
   return (
     <motion.div
       variants={fadeUp}
       whileHover={{ y: -4, scale: 1.005 }}
       className={`${span} ${color} p-7 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden relative group`}
     >
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-white/5 to-transparent pointer-events-none rounded-[2.5rem]" />
+      {/* Shimmer sweep for silver card */}
+      {shimmer && (
+        <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{ x: ["-100%", "200%"] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+            className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/60 to-transparent skew-x-12"
+          />
+        </div>
+      )}
+      {/* Default hover shimmer for other cards */}
+      {!shimmer && (
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-white/5 to-transparent pointer-events-none rounded-[2.5rem]" />
+      )}
       <div className="flex justify-between items-start mb-7">
-        <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10">
+        <div className="w-12 h-12 bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/40 shadow-sm">
           {icon}
         </div>
         <div className="text-right uppercase tracking-widest text-[9px] font-black opacity-70">
@@ -326,7 +341,7 @@ function BentoCard({ title, price, icon, color, items, span }: BentoCardProps) {
           <Link
             key={item.name}
             href={item.href}
-            className="px-4 py-2 rounded-full bg-white text-slate-900 shadow-md border border-white/20 flex items-center text-[10px] font-black uppercase tracking-tight hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 cursor-pointer group/btn"
+            className="px-4 py-2 rounded-full bg-white text-slate-900 shadow-md border border-white/60 flex items-center text-[10px] font-black uppercase tracking-tight hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 cursor-pointer group/btn"
           >
             {item.name} <ChevronRight className="w-3 h-3 ml-1.5 group-hover/btn:translate-x-0.5 transition-transform text-blue-600" />
           </Link>
